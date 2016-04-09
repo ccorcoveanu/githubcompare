@@ -1,16 +1,15 @@
-var React = require('react');
-var Link = require('react-router').Link;
-var PropTypes = React.PropTypes;
-var UserDetails = require('./UserDetails');
-var UserDetailsWrapper = require('./UserDetailsWrapper');
-var MainContainer = require('./MainContainer');
-var Loading = require('./Loading');
+import React, { PropTypes } from 'react';
+import { Link } from 'react-router';
+import UserDetails from './UserDetails';
+import UserDetailsWrapper from './UserDetailsWrapper';
+import MainContainer from './MainContainer';
+import Loading from './Loading';
 
-var styles = require('../styles');
+import { space } from '../styles';
 
 function StartOver () {
     return (
-        <div className="col-sm-12" style={styles.space}>
+        <div className="col-sm-12" style={space}>
             <Link to="/playerOne">
                 <button className="btn btn-lg btn-danger">
                     Start Over
@@ -20,36 +19,50 @@ function StartOver () {
     );
 }
 
-function Results (props) {
+function Tie ({scores, playersInfo}) {
+    return (
+        <MainContainer>
+            <h1>It's a tie</h1>
+            <div className="col-sm-8 col-sm-offset-2">
+                <UserDetailsWrapper header="Player One">
+                    <UserDetails  score={scores[0]} info={playersInfo[0]} />
+                </UserDetailsWrapper>
+                <UserDetailsWrapper header="Player Two">
+                    <UserDetails score={scores[1]} info={playersInfo[1]} />
+                </UserDetailsWrapper>
+            </div>
+            <StartOver />
+        </MainContainer>
+    )
+}
 
-    if ( props.isLoading === true ) {
+function Results ({isLoading, scores, playersInfo}) {
+
+    if ( isLoading === true ) {
         return (
             <Loading/>
         );
     }
 
-    if ( props.scores[0] === props.scores[1] ) {
+    if ( scores[0] === scores[1] ) {
 
         return (
-            <MainContainer>
-                <h1>It's a tie!</h1>
-                <StartOver/>
-            </MainContainer>
+            <Tie scores={scores} playersInfo={playersInfo} />
         );
     }
 
-    var winningIndex = props.scores[0] > props.scores[1] ? 0 : 1;
-    var loosingIndex = winningIndex === 0 ? 1 : 0;
+    const winningIndex = scores[0] > scores[1] ? 0 : 1;
+    const loosingIndex = winningIndex === 0 ? 1 : 0;
 
     return (
         <MainContainer>
             <h1>Results</h1>
             <div className="col-sm-8 col-sm-offset-2">
                 <UserDetailsWrapper header="Winner">
-                    <UserDetails  score={props.scores[winningIndex]} info={props.playersInfo[winningIndex]} />
+                    <UserDetails  score={scores[winningIndex]} info={playersInfo[winningIndex]} />
                 </UserDetailsWrapper>
                 <UserDetailsWrapper header="Looser">
-                    <UserDetails score={props.scores[loosingIndex]} info={props.playersInfo[loosingIndex]} />
+                    <UserDetails score={scores[loosingIndex]} info={playersInfo[loosingIndex]} />
                 </UserDetailsWrapper>
             </div>
             <StartOver />
@@ -63,4 +76,4 @@ Results.propTypes = {
     scores: PropTypes.array.isRequired
 };
 
-module.exports = Results;
+export default Results;

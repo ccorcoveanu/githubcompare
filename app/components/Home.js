@@ -1,15 +1,11 @@
-var React = require('react');
-var ReactRouter = require('react-router');
+import React from 'react';
+import { Link } from 'react-router';
+import MainContainer from './MainContainer';
 
-var Link = ReactRouter.Link;
-
-var MainContainer = require('./MainContainer');
-
-var transparentBg = require('../styles').transparentBg;
+import { transparentBg } from '../styles';
 
 
-var Home = React.createClass({
-    render: function() {
+function Home() {
         return (
             <MainContainer>
                 <h1>Github Battle</h1>
@@ -21,6 +17,5 @@ var Home = React.createClass({
 
         );
     }
-});
 
-module.exports = Home;
+export default Home;

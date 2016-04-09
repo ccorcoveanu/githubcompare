@@ -1,58 +1,63 @@
-var React = require('react');
-var Prompt = require('../components/prompt');
+import React, { Component } from 'react';
+import Prompt from '../components/prompt';
 
-var PromptContainer = React.createClass({
+class PromptContainer extends Component
+{
 
-    contextTypes: {
-        router: React.PropTypes.object.isRequired
-    },
-
-    getInitialState: function() {
-        return {
+    constructor () {
+        super();
+        this.state = {
             username: ''
         }
-    },
+    }
 
-    handleUpdateUser: function(e) {
+    handleUpdateUser (e) {
         this.setState({
             username: e.target.value
         });
-    },
+    }
 
-    handleSubmitUser: function(e) {
+    handleSubmitUser (e) {
 
         e.preventDefault();
 
-        var username = this.state.username;
+        const { username } = this.state;
 
         this.setState({
             username: ''
         });
 
-        if ( this.props.routeParams.playerOne ) {
+        const { playerOne } = this.props.routeParams;
+
+        if ( playerOne ) {
 
             this.context.router.push({
                 pathname: '/battle',
                 query: {
-                    playerOne: this.props.routeParams.playerOne,
-                    playerTwo: this.state.username
+                    playerOne,
+                    playerTwo: username
                 }
             });
         } else {
-            this.context.router.push('/playerTwo/' + this.state.username);
+            this.context.router.push(`/playerTwo/${username}`);
         }
-    },
+    }
 
-    render: function() {
+    render () {
 
         return (
             <Prompt
                 header={this.props.route.header}
                 username={this.state.username}
-                onSubmitUser={this.handleSubmitUser}
-                onUpdateUser={this.handleUpdateUser}
+                onSubmitUser={(event) => this.handleSubmitUser(event)}
+                onUpdateUser={(event) => this.handleUpdateUser(event)}
             />
         );
     }
-});
-module.exports = PromptContainer;
+}
+
+PromptContainer.contextTypes = {
+    router: React.PropTypes.object.isRequired
+}
+
+export default PromptContainer;

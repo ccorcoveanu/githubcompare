@@ -1,33 +1,35 @@
-var axios = require('axios');
+import axios from 'axios';
 
-var url     = 'https://api.github.com';
-var id      = 'CLIENT_ID';
-var sec     = 'CLIENT_SECRET'
-var params  = '?client_id=' + id + '&client_secret=' + sec;
+const url     = 'https://api.github.com';
+const id      = 'CLIENT_ID';
+const sec     = 'CLIENT_SECRET';
+const params  = `?client_id=${id}&client_secret=${sec}`;
 
 function getUserInfo (username) {
-    return axios.get(url + '/users/' + username + params);
+    return axios.get(`${url}/users/${username + params}`);
 };
 
 function getRepos (username) {
-    return axios.get(url + '/users/' + username + '/repos' + params + '&per_page=100');
+    return axios.get(`${url}/users/${username}/repos${params}&per_page=100`);
 };
 
 function getTotalStars(repos) {
-    return repos.data.reduce(function (prev, curr) {
-        return prev + curr.stargazers_count;
-    }, 0);
+    return repos.data.reduce( (prev, curr) => prev + curr.stargazers_count , 0);
 };
 
-function getPlayersData (player) {
-    return getRepos(player.login)
-        .then(getTotalStars)
-        .then(function (totalStars) {
-            return {
-                followers: player.followers,
-                totalStars: totalStars
-            };
-        });
+async function getPlayersData (player) {
+
+    try {
+        const repos = await getRepos(player.login);
+        const totalStars = await getTotalStars(repos);
+        return {
+            followers: player.followers,
+            totalStars
+        };
+    } catch(error) {
+        console.log(error);
+    }
+
 };
 
 function calculateScores (players) {
@@ -37,29 +39,27 @@ function calculateScores (players) {
     ];
 };
 
-var helpers = {
 
-    getPlayersInfo: function (players) {
+export async function getPlayersInfo (players) {
 
-        return axios.all(players.map(function (username) {
-            return getUserInfo(username);
-        })).then(function (info) {
-            return info.map(function (user) {
-                return user.data;
-            });
-        });
-    },
-
-    battle: function (players) {
-        var playerOneData = getPlayersData(players[0]);
-        var playerTwoData = getPlayersData(players[1]);
-
-        return axios.all([playerOneData, playerTwoData])
-            .then(calculateScores)
-            .catch(function (err) {
-                console.log(err);
-            });
+    try {
+        const info = await Promise.all(players.map((username) =>  getUserInfo(username) ));
+        return info.map( (user) => user.data);
+    } catch(error) {
+        console.warn('Error in getPlayersInfo: ',  error);
     }
 };
 
-module.exports = helpers;
+export async function battle (players) {
+    const playerOneData = getPlayersData(players[0]);
+    const playerTwoData = getPlayersData(players[1]);
+
+    try {
+        const players = await Promise.all([playerOneData, playerTwoData]);
+        return calculateScores(players);
+    } catch(error) {
+        console.warn(error);
+    }
+};
+
+

@@ -1,20 +1,16 @@
-var React       = require('react');
-var ReactRouter = require('react-router');
-var Router      = ReactRouter.Router;
-var Route       = ReactRouter.Route;
-var IndexRoute  = ReactRouter.IndexRoute;
-var hashHistory = ReactRouter.hashHistory;
+import React from 'react';
+import { Router, Route, IndexRoute, hashHistory } from 'react-router';
 
 /* Components */
-var Main = require('../components/Main');
-var Home = require('../components/Home');
+import Main from '../components/Main';
+import Home from '../components/Home';
 
 /* Containers */
-var PromptContainer = require('../containers/PromptContainer');
-var ConfirmBattleContainer = require('../containers/ConfirmBattleContainer');
-var ResultsContainer = require('../containers/ResultsContainer');
+import PromptContainer from '../containers/PromptContainer';
+import ConfirmBattleContainer from '../containers/ConfirmBattleContainer';
+import ResultsContainer from '../containers/ResultsContainer';
 
-var routes = (
+const routes = (
     <Router history={hashHistory}>
         <Route path="/" component={Main}>
             <IndexRoute component={Home} />
@@ -26,4 +22,4 @@ var routes = (
     </Router>
 );
 
-module.exports = routes;
+export default routes;

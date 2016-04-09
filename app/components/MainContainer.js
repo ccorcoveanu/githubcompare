@@ -1,13 +1,12 @@
-var React = require('react');
+import React from 'react';
+import { transparentBg } from '../styles';
 
-var styles = require('../styles');
-
-function MainContainer(props) {
+function MainContainer({children}) {
     return (
-        <div className="jumbotron col-sm-12 text-center" style={styles.transparentBg}>
-            {props.children}
+        <div className="jumbotron col-sm-12 text-center" style={transparentBg}>
+            {children}
         </div>
     );
 };
 
-module.exports = MainContainer;
+export default MainContainer;
